@@ -1,0 +1,52 @@
+        static void GetRecordProperties(Record rec)
+        {
+            PropertyInfo[] properties = typeof(Record).GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                string name = property.Name;
+                Type type = property.PropertyType;
+                string value = string.Empty;
+
+                if (name == "AggregatedDisposal") { continue; }
+                try
+                {
+                    var p = property.GetValue(rec);
+                    string theValue = String.Empty;
+                    if (p != null)
+                    {
+                        switch (type.Name)
+                        {
+                            case "Record": value = ((Record)p).Name.ToString(); break;
+                            case "Location": value = ((Location)p).Name.ToString(); break;
+                            case "Schedule": value = ((Schedule)p).Name.ToString(); break;
+                            case "RecordType": value = ((RecordType)p).Name.ToString(); break;
+                            case "ElectronicStore": value = ((ElectronicStore)p).Name.ToString(); break;
+                            //case "TrimAccessControlList": value = ((TrimAccessControlList)p).Name.ToString(); break;
+
+                            default: break;
+                        }
+                        theValue = (string)(value == string.Empty ? p.ToString() : value);
+                        theValue = theValue.Contains(",") ? "\"" + theValue + "\"" : theValue;
+                    }
+
+                    if (rec.IsContainer)
+                    {
+                        if (fileHeaderTable.ContainsKey(name))
+                        {
+                            fileValueTable[fileHeaderTable[name]] = theValue;
+                        }
+                        else
+                        {
+                            if (recordHeaderTable.ContainsKey(name))
+                            {
+                                recordValueTable[recordHeaderTable[name]] = theValue;
+                            }
+                        }
+                        //Console.WriteLine(name + ": " + (value == string.Empty ? p : value));
+                    }
+                }
+                catch (Exception) 
+                {
+                }
+            }
+        }

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <appSettings>
+
+	  <!--add key="Saved Search" value="Cougs 24/17" /-->
+	  
+	  The saved search on which to base this extract. 
+	  Note: the SS can nominate only top-level containers, and it will recurse down into the sub-containers to the leaf nodes
+	  
+	  <add key="Saved Search" value="Cougs D25/3 Recs" />
+	  
+	  File naming: Site Prefix is a filename tag applied to the start of any filenames created
+	  
+	  <add key="Site Prefix" value="Cougs" />
+	  
+	  Extract behaviour:
+	  - Extract metadata and extract documents are usually run in-conjunction 
+	    - Builds a container file (directories with metadata) and a records file (record metadata and paths to associated document payload
+
+	  <add key="TrimExtractMetadata" value="true" />
+	  <add key="TrimExtractDocuments" value="true" />
+	  
+	  - Extract AuditOnly - must run as a separate task due to volumes involved.
+	  - Creates an Import file with metadata for ingest and path data to per-record audit data 
+	  - Contained in a subfolder, depending on naming convention specified in AuditOutfile below
+	  
+	  <add key="TrimExtractAuditOnly" value="false" />
+	  
+	  DBId is the database id of the source TRIM Dataset to open
+
+	  <add key="TRIM DBId" value="45" />
+	  
+	  WGS is the FQDN or IP Address of the TRIM Workgrou Server used to interrogate for the data
+	  - use "local" if running on the WGS host
+
+	  <add key="WGS" value="local" />
+	  
+	  - ContainerExclusionList: a list of record Uris to exclude from the recursion Search
+	  - NOTE: if used, Uris must be numerically sorted in ascending order
+
+	  <add key="ContainerExclusionList" value="" />
+	  
+	  - Path and File specifications
+	  - ExtractBaseDirectory is the top level directory where data is accumulated
+
+	  <add key="ExtractBaseDirectory" value="C:\Temp\Extracts" />
+	  
+	  - RecordsOutfile: file to collect CSV path and record metadata into ...
+	  - ContainerOutfile" file to collect CSV container metadata into ...
+	  - {0} parameter is replaced with Site Prefix, if supplied. May be omitted
+	  
+	  <add key="RecordsOutfile" value="C:\Temp\Extracts\{0}-RecordsOutfile-0.csv" />
+	  <add key="ContainerOutfile" value="C:\Temp\Extracts\{0}-ContainerOutfile-0.csv" />
+	  
+	  - PerfAndLogOutfile: collects performance, count and debugging data into for each run
+	  <add key="PerfAndLogOutfile" value="C:\Temp\Extracts\{0}-PerfAndLogOutfile.csv" />
+	  
+	  - CheckListFile: contains a list of Uris, one per line, of each record that has already been extracted
+	  - To enable faster restarts in the event of a failure
+	  <add key="CheckListFile" value="C:\Temp\Extracts\{0}-CheckListFile.txt" />
+	  
+	  - AuditOutfile: the file into which the top-level metadata and file path data is collected.
+	  - Naming convention:
+	  - {0} is the Site Prefix, if used in a folder context ...\{0}\..., the program creates a directory with the name of the Site Prefix
+	  - {1} is a prefix based on the record number from TRIM. If the record number contains '\', it is replaced with '_'
+	  - {2} is replaced with the record Uri
+	  - e.g., In a direct called "Cougs", located in the extract base directory "C:\Temp\Extracts", 
+	  - the master import file for this example (suitable for ShareGate import):
+	    - Cougs-Import-AuditOutfile.csv
+	  - Per-record audit files are labelled:
+	    - G25_47-340282-AuditOutfile.csv
+		- G25_48-340283-AuditOutfile.csv
+		- ...
+	  
+	  <add key="AuditOutfile" value="C:\Temp\Extracts\{0}\{1}-{2}-AuditOutfile.csv" />
+	  
+	  - The TRIM install base directory:
+	  <add key="TRIM Install Dir" value="C:\Program Files\Micro Focus\Content Manager" />
+	  
+	  - Login Method: two options:
+	  - ExplicitWindows - Windows explicit authentication, prompts for a username and Password
+	  - IntegratedWindows - Windows integrated authentication, uses current credentials of the run user
+
+	  <add key="LoginMethod" value="ExplicitWindows"/>
+	  <!-- add key="LoginMethod" value="IntegratedWindows"/-->
+	  
+	  - The masquerade user to login as:
+
+	  <add key="Username" value="TrimMigrationAdmin" />
+	  <add key="Password" value="TrimMigrationAdmin@123" />
+
+	  <!--add key="Debug" value="true" /-->
+	  <!--add key="Debug" value="debug" /-->
+	  <!--add key="Debug" value="Debug2" /-->
+
+	  <add key="Debug" value="debug" />
+	  
+	  - TRIM Tool Info Architecture options:
+
+	  <add key="IA_Options_DoTrimWalk" value="false" />
+	  <add key="IA_ExtractACLs" value="false" />
+	  <add key="IA_ExtractRecordTypes" value="false" />
+	  <add key="IA_ExtractClassifications" value="false" />
+	  <add key="IA_ExtractSecurity" value="false" />
+	  <add key="IA_ExtractDocStores" value="false" />
+	  <add key="IA_DoRawCount" value="false" />
+	  <add key="IA_DoDumpAuditHistory" value="false" />
+	  <add key="IA_DoRevisionHistogram" value="false" />
+	  <add key="IA_OutputFile" value="C:\Temp\TestDump2.txt" />
+	  
+	  - Document Store Mapping from a local document store (not mandatory, useful for some stuff 
+	  - IFF you can get a copy of the DocStore close to the migration server
+
+	  <add key="TrimExtractUseDocStoreMap" value="false" />
+	  <add key="NumberOfDocStores" value="1" />
+	  <add key="DocStoreSrc_0" value="\\srcfile path\" />
+	  <add key="DocStoreDst_0" value="E:\dst filepath\" />
+
+	<!-- Trim field mapping data mapping src to target names -->
+
+	  <!-- add key="TRIMFolderFields" value="ContainerHierarchy,Title,Number,DateCreated,RetentionSchedule,Assignee,OwnerLocation,HomeLocation,DateRegistered,Creator,LastUpdatedOn,Uri,DateClosed,History" /-->
+	  <!-- add key="RPBaseFolderFields" value="DestinationPath,Title,Legacy Folder Number,Legacy Date Created,Legacy Retention Schedule,Legacy Assignee,Legacy Owner,Legacy Home,Legacy Date Registered,Legacy Creator,Legacy Last Updated On,Legacy URI,Legacy Date Closed,Legacy Audit Events" /-->
+    
+	  <!-- add key="TRIMRecordFields" value="SourcePath,DestinationPath,Version,Title,Number,DateCreated,Assignee,OwnerLocation,HomeLocation,DateRegistered,Author,Container,Addressee,ManualDisposalDate,Notes,LastUpdatedOn,Uri,DateClosed,History" /-->
+	  <!-- add key="RPBaseRecordFields" value="SourcePath,DestinationPath,Version,Title,Legacy Record Number,Legacy Date Created,Legacy Assignee,Legacy Owner,Legacy Home,Legacy Date Registered,Legacy Author,Legacy Container Record Number,Legacy Addressee,Legacy Manual Disposal Date,Legacy Notes,Legacy Last Updated On,Legacy URI,Legacy Date Closed,Legacy Audit Events" /-->
+	  
+	  -- TRIMFolderFields - all container objects in TRIM as also "records" and can contain metadata (and also documents, but no-one really does that ...
+	  -- ContainerHierarchy is used to derive the file path for caching the documents en-route to SharePoint, and is mapped to DestinationPath
+	  -- TRIMRecordFields - all record objects and their metadata.
+	  -- SourcePath is the local cache store, DestinationPath is the SharePoint path, Version is the version number for the revisions
+	  -- All fields must be mapped 1:1 for each source, there must be a destination field name (which must coincide with the target SP Site Collection fields)
+	  -- NOTE: the CSV pattern here must not include any extraneous white space either side of the comma separators.
+	  --       Source fields are camel-case concatenations of the TRIM field names, these are used to match the internal SDK field name representations
+	  --       Source User Defined Fields (UDFs) preserve their source naming conventions (i.e., if there is white space in the UDF name, use the same here.
+
+	  <add key="TRIMFolderFields" value="ContainerHierarchy,Title,Number,DateCreated,RetentionSchedule,Assignee,OwnerLocation,HomeLocation,DateRegistered,Creator,LastUpdatedOn,Uri,DateClosed,History" />
+	  <add key="RPBaseFolderFields" value="DestinationPath,Title,Legacy Folder Number,Legacy Date Created,Legacy Retention Schedule,Legacy Assignee,Legacy Owner,Legacy Home,Legacy Date Registered,Legacy Creator,Legacy Last Updated On,Legacy URI,Legacy Date Closed,Legacy Audit Events" />
+	  <add key="TRIMRecordFields" value="SourcePath,DestinationPath,Version,Title,Number,DateCreated,Creator,Assignee,OwnerLocation,HomeLocation,DateRegistered,Author,Container,Addressee,ManualDisposalDate,Notes,LastUpdatedOn,Uri,DateClosed,History,Cost 1,Date 1" />
+	  <add key="RPBaseRecordFields" value="SourcePath,DestinationPath,Version,Title,Legacy Record Number,Legacy Date Created,Legacy Creator,Legacy Assignee,Legacy Owner,Legacy Home,Legacy Date Registered,Legacy Author,Legacy Container Record Number,Legacy Addressee,Legacy Manual Disposal Date,Legacy Notes,Legacy Last Updated On,Legacy URI,Legacy Date Closed,Legacy Audit Events,Legacy Cost 1,Legacy Date 1" />
+
+	  <add key="ClientSettingsProvider.ServiceUri" value="" />
+  </appSettings>
+  <startup>
+    <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />
+  </startup>
+  <system.web>
+    <membership defaultProvider="ClientAuthenticationMembershipProvider">
+      <providers>
+        <add name="ClientAuthenticationMembershipProvider" type="System.Web.ClientServices.Providers.ClientFormsAuthenticationMembershipProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" />
+      </providers>
+    </membership>
+    <roleManager defaultProvider="ClientRoleProvider" enabled="true">
+      <providers>
+        <add name="ClientRoleProvider" type="System.Web.ClientServices.Providers.ClientRoleProvider, System.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" serviceUri="" cacheTimeout="86400" />
+      </providers>
+    </roleManager>
+  </system.web>
+  <runtime>
+    <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      <dependentAssembly>
+        <assemblyIdentity name="System.Runtime.CompilerServices.Unsafe" publicKeyToken="b03f5f7f11d50a3a" culture="neutral" />
+        <bindingRedirect oldVersion="0.0.0.0-4.0.4.1" newVersion="4.0.4.1" />
+      </dependentAssembly>
+    </assemblyBinding>
+  </runtime>
+</configuration>
