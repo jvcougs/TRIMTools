@@ -29,11 +29,11 @@ namespace TRIMAuditExtract
 
             swAuditOutfile.WriteLine("Event,For Object Uri,Record Number,Updated By,Event Date,EventDescription");
 
-            string uri = srAuditInputfile.ReadLine();
+            string uri = String.Empty;
             while (!srAuditInputfile.EndOfStream)
             {
-                GetFullHistory(uri, swAuditOutfile);
                 uri = srAuditInputfile.ReadLine();
+                GetFullHistory(uri, swAuditOutfile);
             }
             swAuditOutfile.Close();
             srAuditInputfile.Close();
@@ -41,7 +41,7 @@ namespace TRIMAuditExtract
         static void GetFullHistory(string szRecUri, StreamWriter swRecAuditOutfile)
         {
             TrimMainObjectSearch srch = new TrimMainObjectSearch(_db, BaseObjectTypes.History);
-            srch.SetFilterString("object:record," + szRecUri);
+            srch.SetFilterString(strInputFileFilterFormat + szRecUri);
             srch.SelectAll();
 
             if (srch.Count == 0)
@@ -62,7 +62,7 @@ namespace TRIMAuditExtract
                 try
                 {
                     string hs = SanitiseFieldValue(h.EventDescription);
-                    string strEvent = hs.Substring(0, hs.IndexOf(" - "));
+                    string strEvent = hs; // hs.Substring(0, hs.IndexOf(" - "));
 
                     Location lub = h.LastUpdatedBy;
                     string lubName = lub?.Name;

@@ -8,9 +8,9 @@ namespace TRIMAuditExtract
 {
     internal partial class Program
     {
-        //static string strUsername = string.Empty;
-        //static string strPassword = string.Empty;
-
+        static string strUsername = "Not found";
+        static string strPassword = "Not found";
+        static string strLoginMethod = string.Empty;
         static string strExtractBaseDir = string.Empty;
         static string strTrimInstallDir = string.Empty;
         static string strWGS = string.Empty;
@@ -18,6 +18,7 @@ namespace TRIMAuditExtract
         static string strPerfAndLogOutfile = string.Empty;
         static string strAuditOutfile = string.Empty;
         static string strAuditInputfile = string.Empty;
+        static string strInputFileFilterFormat = string.Empty;
         static string strExtractBaseDirectory = string.Empty;
         
         static string strDebug = string.Empty;
@@ -61,8 +62,32 @@ namespace TRIMAuditExtract
                         Console.WriteLine("Connecting to {0}", strWGS);
                         swPerfAndLogOutfile.WriteLine("Connecting to {0}", strWGS);
                         //db.ConnectAs(strUsername, strPassword);
+                        if (strLoginMethod == "ExplicitWindows")
+                        {
+                            Console.WriteLine("Connecting using Explicit Windows");
+                            swPerfAndLogOutfile.WriteLine("Connecting using Explicit Windows");
 
-                        db.Connect();
+                            db.AuthenticationMethod = ClientAuthenticationMechanism.ExplicitWindows;
+                        }
+                        else if (strLoginMethod == "IntegratedWindows")
+                        {
+                            Console.WriteLine("Connecting using Integrated Windows Authentication.");
+                            swPerfAndLogOutfile.WriteLine("Connecting using Integrated Windows Authentication.");
+
+                            db.AuthenticationMethod = ClientAuthenticationMechanism.IntegratedWindows;
+                        }
+
+                        if (strUsername != "Not found" && strPassword != "Not found")
+                        {
+                            db.ConnectAs(strUsername, strPassword);
+                        }
+
+                        if (!db.IsConnected)
+                        {
+                            db.AutoConnect = true;
+                            db.Connect();
+                        }
+
                         Console.WriteLine("DB Id=" + db.Id);
                         swPerfAndLogOutfile.WriteLine("DB Id=" + db.Id);
                     }
@@ -97,10 +122,11 @@ namespace TRIMAuditExtract
         static void Init()
         {
             strDebug = ConfigTools.GetAppSetting("Debug");
-            strDebug = ConfigTools.GetAppSetting("Debug");
 
-            //strUsername = ConfigTools.GetAppSetting("Username");
-            //strPassword = ConfigTools.GetAppSetting("Password");
+            strLoginMethod = ConfigTools.GetAppSetting("LoginMethod");
+
+            strUsername = ConfigTools.GetAppSetting("Username");
+            strPassword = ConfigTools.GetAppSetting("Password");
 
             strWGS = ConfigTools.GetAppSetting("WGS");
 
@@ -112,6 +138,8 @@ namespace TRIMAuditExtract
             strAuditOutfile = ConfigTools.GetAppSetting("AuditOutfile");
             strAuditInputfile = ConfigTools.GetAppSetting("AuditInputfile");
 
+            strInputFileFilterFormat = ConfigTools.GetAppSetting("InputFileFilterFormat");
+            
             string temp = Environment.GetEnvironmentVariable("PATH") + ":" + strTrimInstallDir;
             Environment.SetEnvironmentVariable("PATH", temp);
 
