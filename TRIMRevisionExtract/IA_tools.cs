@@ -23,6 +23,7 @@ namespace TRIMRevisionExtract
         public string IA_DoRawCount = string.Empty;
         public string IA_DumpAuditHistory = string.Empty;
         public string IA_DoRevisionHistogram = string.Empty;
+        public string IA_DoTitleRecci = string.Empty;
         public string IA_OutputFile = string.Empty;
         public string strSavedSearch = string.Empty;
 
@@ -554,11 +555,50 @@ namespace TRIMRevisionExtract
 
         }
 
+        void DumpTitles()
+        {
+
+            //dh = new DocHistogram(IA_OutputFile);
+
+            SetWriter("IA-TitleRecci.csv");
+            Writer.WriteLine("Uri,Number,Title");
+
+            // do walkies here
+            SavedSearch ss = new SavedSearch(db, strSavedSearch);
+            TrimMainObjectSearch objSearch = ss.GetSearch();
+
+            recCount = 0;
+            long xCount = 0;
+            foreach (Record objRec in objSearch)
+            {
+                recCount++;
+                if (objRec.Title.Length > 255)
+                {
+                    Writer.WriteLine("{0},{1},\"{2}\"", objRec.Uri, objRec.Number, objRec.Title);
+                    Console.WriteLine("Hit: [{0}]", ++xCount);
+                }
+
+                if (recCount % 1000 == 0)
+                {
+                    Console.WriteLine("recCount == {0}", recCount);
+                }
+            }
+
+            //dh.Dump();
+            Console.WriteLine("eRecords processed: {0}", recCount);
+
+        }
+
         Stopwatch _sw = null;
         public void DoTrimIAStuff(Stopwatch sw)
         {
             _sw = sw;
             //ACLSR
+
+            if (IA_DoTitleRecci == "true")
+            {
+                DumpTitles();
+            }
 
             if (IA_DoRevisionHistogram == "true")
             {
