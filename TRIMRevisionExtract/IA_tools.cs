@@ -24,6 +24,7 @@ namespace TRIMRevisionExtract
         public string IA_DumpAuditHistory = string.Empty;
         public string IA_DoRevisionHistogram = string.Empty;
         public string IA_DoTitleRecci = string.Empty;
+
         public string IA_OutputFile = string.Empty;
         public string strSavedSearch = string.Empty;
 

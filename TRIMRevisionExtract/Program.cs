@@ -57,6 +57,7 @@ namespace TRIMRevisionExtract
         static string IA_DoRawCount = string.Empty;
         static string IA_DoDumpAuditHistory = string.Empty;
         static string IA_DoRevisionHistogram = string.Empty;
+
         static string IA_DoTitleRecci = string.Empty;
         static string IA_OutputFile = string.Empty;
 
