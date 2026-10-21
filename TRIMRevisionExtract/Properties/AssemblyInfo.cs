@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TRIMRevisionExtract")]
-[assembly: AssemblyDescription("added IA counts for empty records, and alt container counts")]
+[assembly: AssemblyDescription("IA service for mining out record types and exposed properties")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TRIMRevisionExtract")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.2.12")]
-[assembly: AssemblyFileVersion("1.0.2.12")]
+[assembly: AssemblyVersion("1.0.2.15")]
+[assembly: AssemblyFileVersion("1.0.2.15")]

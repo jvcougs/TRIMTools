@@ -190,7 +190,61 @@ namespace TRIMRevisionExtract
                 }
                 writer.WriteLine(sb.ToString());
 
-                //Console.WriteLine("{0},{1},{2},{3}", rt.Name, rt.ActiveDateRangeDescription, rt.Level, rt.URN);
+                FormDefinition formDefinition = rt.RecordPropertiesFormDefinition;
+
+                if (formDefinition != null)
+                {
+                    // Use uint for looping to match the CM 9.4 SDK signatures
+                    for (uint pageCount = 0; pageCount < formDefinition.PageCount; pageCount++)
+                    {
+                        PageDefinition pageDefinition = formDefinition.GetPage(pageCount);
+                        if (pageDefinition == null) continue;
+
+                        string pageCaption = pageDefinition.Caption;
+
+                        for (uint itemCount = 0; itemCount < pageDefinition.ItemCount; itemCount++)
+                        {
+                            PageItemDefinition itemDefinition = pageDefinition.GetItem(itemCount);
+                            if (itemDefinition == null) continue;
+
+                            string fieldName = itemDefinition.Caption;
+                            string fieldType = "Unknown";
+                            string dataType = "Unknown";
+
+                            // 3. Differentiate between User-Defined Fields and System Properties
+                            if (itemDefinition.IsItemAFieldDefinition)
+                            {
+                                fieldType = "User-Defined Field";
+
+                                // Extract the actual FieldDefinition to grab the true format
+                                FieldDefinition userFieldDef = itemDefinition.Field;
+                                if (userFieldDef != null)
+                                {
+                                    dataType = userFieldDef.Format.ToString(); // UserFieldFormats enum string
+                                }
+                            }
+                            else if(itemDefinition.IsItemAProperty)
+                            {
+                                fieldType = "System Field";
+
+                                // Extract PropertyDef characteristics for standard system properties
+                                PropertyDef propDef = new PropertyDef(itemDefinition.PropertyId, db);
+                                
+                                if (propDef != null)
+                                {
+                                    dataType = propDef.Format.ToString(); // PropertyFormats enum string
+                                }
+                            }
+                            else 
+                            {
+                                continue;
+                            }
+
+                            writer.WriteLine($"\t\"{fieldName}\",\"{fieldType}\",\"{dataType}\",\"{pageCaption}\"");
+                        }
+                    }
+                }
+
             }
 
             StringBuilder folderKeys = new StringBuilder();
