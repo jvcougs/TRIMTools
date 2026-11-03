@@ -157,7 +157,7 @@ namespace TRIMRevisionExtract
 
                     Location lub = h.LastUpdatedBy;
                     string lubName = lub?.Name;
-                    string strUpdater = SanitiseFieldValue(lub.Name);
+                    string strUpdater = SanitiseFieldValue(lubName);
                     string strDateUpdated = h.LastUpdatedOn.ToString();
 
                     swRecAuditOutfile.WriteLine("{0},{1},{2},{3},{4},{5}", strEvent, h.ForObjectUri, rec.Number, strUpdater, strDateUpdated, hs);
