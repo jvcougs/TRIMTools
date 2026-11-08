@@ -145,6 +145,9 @@ namespace TRIMRevisionExtract
                             case "Schedule": value = ((Schedule)p).Name.ToString(); break;
                             case "RecordType": value = ((RecordType)p).Name.ToString(); break;
                             case "ElectronicStore": value = ((ElectronicStore)p).Name.ToString(); break;
+                            case "Classification": 
+                                value = ((Classification)p).Name.ToString();
+                                break;
 
                             //case "TrimAccessControlList": value = ((TrimAccessControlList)p).Name.ToString(); break;
 
