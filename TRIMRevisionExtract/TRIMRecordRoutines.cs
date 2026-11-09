@@ -303,8 +303,8 @@ namespace TRIMRevisionExtract
                     }
                     else if (rec.AssigneeStatus == RecLocSubTypes.AtHome)
                     {
-                        string slug = container.Title;
-                        if (slug.Contains("-"))
+                        string slug = container?.Title;
+                        if (slug != null && slug.Contains("-"))
                         {
                             slug = slug.Remove(slug.IndexOf("-"));
                         }

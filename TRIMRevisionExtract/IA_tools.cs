@@ -609,13 +609,13 @@ namespace TRIMRevisionExtract
 
         }
 
-        void DumpTitles()
+        void DoTitleRecci()
         {
 
             //dh = new DocHistogram(IA_OutputFile);
 
             SetWriter("IA-TitleRecci.csv");
-            Writer.WriteLine("Uri,Number,Title");
+            Writer.WriteLine("Uri,Number,ContainerHierarchy,Title,Classification");
 
             // do walkies here
             SavedSearch ss = new SavedSearch(db, strSavedSearch);
@@ -626,9 +626,11 @@ namespace TRIMRevisionExtract
             foreach (Record objRec in objSearch)
             {
                 recCount++;
-                if (objRec.Title.Length > 255)
+                if (objRec.Title.Length > 200)
                 {
-                    Writer.WriteLine("{0},{1},\"{2}\"", objRec.Uri, objRec.Number, objRec.Title);
+                    Classification c = objRec.Classification;
+                    string cs = c?.NameString;
+                    Writer.WriteLine("{0},{1},{2},\"{3}\",{4}", objRec.Uri, objRec.Number, objRec.ContainerHierarchy, objRec.Title, cs);
                     Console.WriteLine("Hit: [{0}]", ++xCount);
                 }
 
@@ -651,7 +653,7 @@ namespace TRIMRevisionExtract
 
             if (IA_DoTitleRecci == "true")
             {
-                DumpTitles();
+                DoTitleRecci();
             }
 
             if (IA_DoRevisionHistogram == "true")
