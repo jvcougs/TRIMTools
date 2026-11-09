@@ -24,6 +24,8 @@ namespace TRIMRevisionExtract
         public string IA_DumpAuditHistory = string.Empty;
         public string IA_DoRevisionHistogram = string.Empty;
         public string IA_DoTitleRecci = string.Empty;
+        public string IA_DoDispositionExtract = string.Empty;
+
         public string IA_OutputFile = string.Empty;
         public string strSavedSearch = string.Empty;
 
@@ -612,8 +614,6 @@ namespace TRIMRevisionExtract
         void DoTitleRecci()
         {
 
-            //dh = new DocHistogram(IA_OutputFile);
-
             SetWriter("IA-TitleRecci.csv");
             Writer.WriteLine("Uri,Number,ContainerHierarchy,Title,Classification");
 
@@ -645,11 +645,45 @@ namespace TRIMRevisionExtract
 
         }
 
-        Stopwatch _sw = null;
+        void DoDispositionExtract()
+        {
+            SetWriter("IA-DoDispositionExtract.csv");
+            Writer.WriteLine("Uri,Number,Disposition,DispositionChangedDate,DisposalDate,DocumentDetails");
+
+            // do walkies here
+            SavedSearch ss = new SavedSearch(db, strSavedSearch);
+            TrimMainObjectSearch objSearch = ss.GetSearch();
+
+            recCount = 0;
+            foreach (Record objRec in objSearch)
+            {
+                recCount++;
+
+                string disposition = objRec.Disposition.ToString();
+                string dispositionChangedDate = objRec.DispositionChangedDate.ToString();
+                string disposalDate = objRec.DisposalDate.ToString();
+                string disposalMsg = objRec.DocumentDetails;
+
+                Writer.WriteLine("{0},{1},{2},{3},{4},{5}",objRec.Uri,objRec.Number,disposition,dispositionChangedDate,disposalDate,disposalMsg);
+
+                if (recCount % 1000 == 0)
+                {
+                    Console.WriteLine("recCount == {0}", recCount);
+                }
+            }
+
+            //dh.Dump();
+            Console.WriteLine("eRecords processed: {0}", recCount);
+        }
+            Stopwatch _sw = null;
         public void DoTrimIAStuff(Stopwatch sw)
         {
             _sw = sw;
-            //ACLSR
+
+            if (IA_DoDispositionExtract == "true")
+            {
+                DoDispositionExtract();
+            }
 
             if (IA_DoTitleRecci == "true")
             {

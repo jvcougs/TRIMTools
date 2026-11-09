@@ -16,6 +16,7 @@ namespace TRIMAuditExtract
         static string strWGS = string.Empty;
         static string strDBId = string.Empty;
         static string strPerfAndLogOutfile = string.Empty;
+        static string strDisposition = string.Empty;
         static string strAuditOutfile = string.Empty;
         static string strAuditInputfile = string.Empty;
         static string strInputFileFilterFormat = string.Empty;

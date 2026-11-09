@@ -38,6 +38,15 @@ namespace TRIMAuditExtract
             swAuditOutfile.Close();
             srAuditInputfile.Close();
         }
+
+        static void GetDisposition(string szRecUri, StreamWriter outfile)
+        {
+            Record hrec = h.Record;
+            string disposition = hrec.Disposition.ToString();
+            string dispositionChangedDate = hrec.DispositionChangedDate.ToString();
+            string disposalDate = hrec.DisposalDate.ToString();
+
+        }
         static void GetFullHistory(string szRecUri, StreamWriter swRecAuditOutfile)
         {
             TrimMainObjectSearch srch = new TrimMainObjectSearch(_db, BaseObjectTypes.History);

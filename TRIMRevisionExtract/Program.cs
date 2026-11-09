@@ -57,7 +57,9 @@ namespace TRIMRevisionExtract
         static string IA_DoRawCount = string.Empty;
         static string IA_DoDumpAuditHistory = string.Empty;
         static string IA_DoRevisionHistogram = string.Empty;
+
         static string IA_DoTitleRecci = string.Empty;
+        static string IA_DoDispositionExtract = string.Empty;
         static string IA_OutputFile = string.Empty;
 
         static bool doIA = false;
@@ -308,7 +310,7 @@ namespace TRIMRevisionExtract
             IA_DoDumpAuditHistory = ConfigTools.GetAppSetting("IA_DoDumpAuditHistory");
             IA_DoRevisionHistogram = ConfigTools.GetAppSetting("IA_DoRevisionHistogram");
             IA_DoTitleRecci = ConfigTools.GetAppSetting("IA_DoTitleRecci");
-            
+            IA_DoDispositionExtract = ConfigTools.GetAppSetting("IA_DoDispositionExtract");
             IA_OutputFile = ConfigTools.GetAppSetting("IA_OutputFile");
 
             LoadEStoreMap();
@@ -327,7 +329,8 @@ namespace TRIMRevisionExtract
                 IA_DoRawCount == "true" ||
                 IA_DoDumpAuditHistory == "true" ||
                 IA_DoRevisionHistogram == "true" ||
-                IA_DoTitleRecci == "true";
+                IA_DoTitleRecci == "true" ||
+                IA_DoDispositionExtract == "true";
 
             if (doIA)
             {
@@ -342,6 +345,7 @@ namespace TRIMRevisionExtract
                 ia_tools.IA_DumpAuditHistory = IA_DoDumpAuditHistory;
                 ia_tools.IA_DoRevisionHistogram = IA_DoRevisionHistogram;
                 ia_tools.IA_DoTitleRecci = IA_DoTitleRecci;
+                ia_tools.IA_DoDispositionExtract = IA_DoDispositionExtract;
                 ia_tools.strSavedSearch = strSavedSearch;
                 ia_tools.IA_OutputFile = IA_OutputFile;
             }
