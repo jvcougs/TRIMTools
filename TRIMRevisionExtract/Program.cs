@@ -270,6 +270,7 @@ namespace TRIMRevisionExtract
                 }
 
                 i = 0;
+
                 table = "Record";
                 foreach (string line in recordRPHeaders)
                 {

@@ -299,6 +299,7 @@ namespace TRIMRevisionExtract
                         theValue = theValue + " since " + rec.DateAssigned; //?
                     }
                     break;
+
                 case "Assignee":
                     if (rec.AssigneeStatus == RecLocSubTypes.InContainer)
                     {
