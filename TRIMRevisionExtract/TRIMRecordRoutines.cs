@@ -123,6 +123,7 @@ namespace TRIMRevisionExtract
 
                 if (strDebug == "Debug2")
                 {
+                    Console.WriteLine("GetRecordProperties: name={0}, type.Name={1}", name, type.Name);
                     swPerfAndLogOutfile.WriteLine("GetRecordProperties: name={0}, type.Name={1}", name, type.Name);
                 }
 
@@ -269,21 +270,23 @@ namespace TRIMRevisionExtract
  
         static void FixLocation(Record rec, string propName, ref string theValue)
         {
-            Record container = rec.Container;
-
             if (strDebug == "Debug2")
             {
-                Console.WriteLine("FixLocation: Container.Name:[{0}] propName={1}, theValue={2}", container.Name, propName, theValue);
+                Console.WriteLine("FixLocation: rec.Name:[{0}] propName={1}, theValue={2}", rec.Name, propName, theValue);
+                swPerfAndLogOutfile.WriteLine("FixLocation: rec.Name:[{0}] propName={1}, theValue={2}", rec.Name, propName, theValue);
             }
+
             switch (propName)
             {
                 case "HomeLocation":
                     if (rec.HomeLocationStatus == RecLocSubTypes.InContainer)
                     {
+                        Record container = rec.Container;
                         theValue = container.Name + " (In container)";
                     }
                     else if (rec.HomeLocationStatus == RecLocSubTypes.AtHome)
                     {
+                        Record container = rec.Container;
                         string slug = container.Title;
                         if (slug.Contains("-"))
                         {
@@ -299,16 +302,22 @@ namespace TRIMRevisionExtract
                 case "Assignee":
                     if (rec.AssigneeStatus == RecLocSubTypes.InContainer)
                     {
+                        Record container = rec.Container;
                         theValue = rec.Container.Name + " (In container)";
                     }
                     else if (rec.AssigneeStatus == RecLocSubTypes.AtHome)
                     {
+                        Record container = rec.Container;
+                        if (container == null)
+                        {
+                            return;
+                        }
                         string slug = container?.Title;
                         if (slug != null && slug.Contains("-"))
                         {
                             slug = slug.Remove(slug.IndexOf("-"));
                         }
-                        theValue = "In container '" + container.Name + " (" + slug.TrimEnd(' ') + ")' since " + rec.DateAssigned;
+                        theValue = "In container '" + container?.Name + " (" + slug.TrimEnd(' ') + ")' since " + rec.DateAssigned;
                     }
                     else if (rec.AssigneeStatus == RecLocSubTypes.AtLocation)
                     {

@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TRIMRevisionExtract")]
-[assembly: AssemblyDescription("IA Title recci tool expanded")]
+[assembly: AssemblyDescription("Minor bug fixes, argument exception stuff")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TRIMRevisionExtract")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCopyright("Copyright ©  2025,2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

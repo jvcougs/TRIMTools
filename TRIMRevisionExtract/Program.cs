@@ -257,17 +257,31 @@ namespace TRIMRevisionExtract
             string[] recordRPHeaders = strRPRecordHeaders.Split(',');
 
             int i = 0;
-            foreach (string line in fileRPHeaders)
+            string table = string.Empty;
+            string field = string.Empty;
+            try
             {
-                fileHeaderTable.Add(fileTRIMHeaders[i++], line);
-                fileValueTable.Add(line, "");
-            }
+                table = "Container";
+                foreach (string line in fileRPHeaders)
+                {
+                    field = line;
+                    fileHeaderTable.Add(fileTRIMHeaders[i++], line);
+                    fileValueTable.Add(line, "");
+                }
 
-            i = 0;
-            foreach (string line in recordRPHeaders)
+                i = 0;
+                table = "Record";
+                foreach (string line in recordRPHeaders)
+                {
+                    field = line;
+                    recordHeaderTable.Add(recordTRIMHeaders[i++], line);
+                    recordValueTable.Add(line, "");
+                }
+            }
+            catch 
             {
-                recordHeaderTable.Add(recordTRIMHeaders[i++], line);
-                recordValueTable.Add(line, "");
+                Console.WriteLine("Error: duplicate field: {0} {1}", table, field);
+                throw new ArgumentException("Error: duplicate field");
             }
 
             string temp = Environment.GetEnvironmentVariable("PATH") + ":" + strTrimInstallDir;
