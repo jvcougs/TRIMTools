@@ -127,14 +127,19 @@ namespace TRIMRevisionExtract
                     swPerfAndLogOutfile.WriteLine("GetRecordProperties: name={0}, type.Name={1}", name, type.Name);
                 }
 
-                // bug: if you try this value, it hangs ...
-                if (name == "AggregatedDisposal") { continue; }
+                // bug: if you try this value, it hangs or prangs ...
+                if (name == "AggregatedDisposal"
+                 || name ==  "DocumentPathInClientCache"
+                 || name == "DocumentPathInWGSCache")
+                {
+                    continue;
+                }
 
                 string theValue = String.Empty;
 
                 try
                 {
-                    var p = property.GetValue(rec);
+                    var p = property?.GetValue(rec);
 
                     if (p != null)
                     {
@@ -214,62 +219,69 @@ namespace TRIMRevisionExtract
             {
                 foreach (long fieldUri in relevantFields)
                 {
-                    string valueString = string.Empty;
-                    FieldDefinition fieldDef = new FieldDefinition(rec.Database, fieldUri);
-
-                    UserFieldValue value = rec.GetFieldValue(fieldDef);
-
-                    switch (fieldDef.Format)
+                    try
                     {
-                        case UserFieldFormats.Date:
-                        case UserFieldFormats.Datetime:
-                            TrimDateTime trimDate = value.AsDate();
-                            valueString = (trimDate != null && !trimDate.IsClear)
-                                ? trimDate.ToDateTime().ToString("yyyy-MM-dd HH:mm:ss")
-                                : null;
-                            break;
+                        string valueString = string.Empty;
+                        FieldDefinition fieldDef = new FieldDefinition(rec.Database, fieldUri);
 
-                        case UserFieldFormats.Boolean:
-                            valueString = value.AsBool() ? "1" : "0"; // Uniform binary representation
-                            break;
+                        UserFieldValue value = rec.GetFieldValue(fieldDef);
 
-                        case UserFieldFormats.Object:
-                            Location linkedLoc = value.AsTrimObject() as Location;
-                            valueString = linkedLoc != null ? linkedLoc.FormattedName : null; // Relational foreign key
-                            break;
-
-                        default:
-                            // Safe standard handling for basic String, Text, Number, and Currency fields
-                            valueString = rec.GetFieldValueAsString(fieldDef, StringDisplayType.ViewPane, false);
-                            break;
-                    }
-
-                    if (strDebug == "Debug2" && !string.IsNullOrEmpty(valueString))
-                    {
-                        Console.WriteLine($"Record: {rec.Number} | Field: {fieldDef.Name} | Value: {valueString}");
-                    }
-                    // get field name and value
-                    // lodge in corresponding slot in record/file value table
-                    //
-
-                    if (rec.IsContainer)
-                    {
-                        if (fileHeaderTable.ContainsKey(fieldDef.Name))
+                        switch (fieldDef.Format)
                         {
+                            case UserFieldFormats.Date:
+                            case UserFieldFormats.Datetime:
+                                TrimDateTime trimDate = value.AsDate();
+                                valueString = (trimDate != null && !trimDate.IsClear)
+                                    ? trimDate.ToDateTime().ToString("yyyy-MM-dd HH:mm:ss")
+                                    : null;
+                                break;
 
-                            fileValueTable[fileHeaderTable[fieldDef.Name]] = valueString;
+                            case UserFieldFormats.Boolean:
+                                valueString = value.AsBool() ? "1" : "0"; // Uniform binary representation
+                                break;
+
+                            case UserFieldFormats.Object:
+                                Location linkedLoc = value?.AsTrimObject() as Location;
+                                valueString = linkedLoc != null ? linkedLoc.FormattedName : null; // Relational foreign key
+                                break;
+
+                            default:
+                                // Safe standard handling for basic String, Text, Number, and Currency fields
+                                valueString = rec.GetFieldValueAsString(fieldDef, StringDisplayType.ViewPane, false);
+                                break;
                         }
-                    }
-                    else
-                    {
-                        if (recordHeaderTable.ContainsKey(fieldDef.Name))
+
+                        if (strDebug == "Debug2" && !string.IsNullOrEmpty(valueString))
                         {
-                            recordValueTable[recordHeaderTable[fieldDef.Name]] = valueString;
+                            Console.WriteLine($"Record: {rec.Number} | Field: {fieldDef.Name} | Value: {valueString}");
                         }
+                        // get field name and value
+                        // lodge in corresponding slot in record/file value table
+                        //
+
+                        if (rec.IsContainer)
+                        {
+                            if (fileHeaderTable.ContainsKey(fieldDef.Name))
+                            {
+                                fileValueTable[fileHeaderTable[fieldDef.Name]] = valueString;
+                            }
+                        }
+                        else
+                        {
+                            if (recordHeaderTable.ContainsKey(fieldDef.Name))
+                            {
+                                recordValueTable[recordHeaderTable[fieldDef.Name]] = valueString;
+                            }
+                        }
+                    } //try
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("GetRecordProperties: UDF: Exception: {0}, property name=[{1}]", ex.Message, fieldUri.ToString());
+                        swPerfAndLogOutfile.WriteLine("GetRecordProperties: UDF: Exception: {0}, property name=[{1}]", ex.Message, fieldUri.ToString());
                     }
-                }
-            }
-        }
+                } // foreach UDF
+            } // if UDF
+        } // GetRecordProperties
  
         static void FixLocation(Record rec, string propName, ref string theValue)
         {
