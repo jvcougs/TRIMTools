@@ -146,7 +146,7 @@ namespace TRIMRevisionExtract
                             case "RecordType": value = ((RecordType)p).Name.ToString(); break;
                             case "ElectronicStore": value = ((ElectronicStore)p).Name.ToString(); break;
                             case "Classification": 
-                                value = ((Classification)p).Name.ToString();
+                                value = ((Classification)p).NameString.ToString();
                                 break;
 
                             //case "TrimAccessControlList": value = ((TrimAccessControlList)p).Name.ToString(); break;
@@ -303,6 +303,11 @@ namespace TRIMRevisionExtract
                     }
                     break;
 
+                case "LastUpdatedBy":
+                    Location loc = rec.LastUpdatedBy;
+                    theValue = loc?.NameString;
+                    theValue = rec.GetPropertyAsString(PropertyIds.LastUpdatedBy, StringDisplayType.Default, false);
+                    break;
                 case "Assignee":
                     if (rec.AssigneeStatus == RecLocSubTypes.InContainer)
                     {
