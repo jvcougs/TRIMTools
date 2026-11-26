@@ -83,30 +83,34 @@ namespace TRIMRevisionExtract
             sw.WriteLine($"{rec.SourcePath},{rec.DestinationPath},{rec.Version},\"{rec.Title}\",{rec.Number},{rec.DateCreated},\"{rec.Assignee}\",\"{rec.OwnerLocation}\",\"{rec.HomeLocation}\",{rec.DateRegistered},\"{rec.Author}\",{rec.Container},\"{rec.Addressee}\",{rec.ManualDisposalDate},\"{rec.Notes}\",{rec.LastUpdatedOn},{rec.Uri},{rec.DateClosed},\"{rec.History}\"");
         }
 
-        public CheckList(string ContainerFile, string RecordsFile, string CHeaders, string RHeaders) 
+        //public CheckList(string ContainerFile, string RecordsFile, string CHeaders, string RHeaders) 
+        //{
+        //    strContainerFile = ContainerFile;
+        //    strRecordsFile = RecordsFile;
+
+        //    strRPFileHeaders = CHeaders;
+        //    strRPRecordHeaders = RHeaders;
+
+        //    LoadFiles();
+        //}
+
+        //public CheckList(string ContainerFile, string RecordsFile, string CheckListFile, string CHeaders, string RHeaders)
+        //{
+        //    strContainerFile = ContainerFile;
+        //    strRecordsFile = RecordsFile;
+
+        //    strRPFileHeaders = CHeaders;
+        //    strRPRecordHeaders = RHeaders;
+
+        //    LoadFiles();
+        //    //RefactorDataFiles(strRecordsFile, strContainerFile);
+        //    //LoadCheckList(CheckListFile);
+        //}
+
+        public CheckList(string CheckListFile)
         {
-            strContainerFile = ContainerFile;
-            strRecordsFile = RecordsFile;
-
-            strRPFileHeaders = CHeaders;
-            strRPRecordHeaders = RHeaders;
-
-            LoadFiles();
+            LoadCheckList(CheckListFile);
         }
-
-        public CheckList(string ContainerFile, string RecordsFile, string CheckListFile, string CHeaders, string RHeaders)
-        {
-            strContainerFile = ContainerFile;
-            strRecordsFile = RecordsFile;
-
-            strRPFileHeaders = CHeaders;
-            strRPRecordHeaders = RHeaders;
-
-            LoadFiles();
-            RefactorDataFiles(strRecordsFile, strContainerFile);
-            //LoadCheckList(CheckListFile);
-        }
-
 
         public bool doCheckUri(string Uri, ref long globalCounter)
         {
@@ -189,7 +193,7 @@ namespace TRIMRevisionExtract
                 return;
             }
             
-            RenameDataFiles();
+ //           RenameDataFiles();
 
             Console.WriteLine();
             StreamReader streamReader = new StreamReader(CheckListFile);
@@ -222,28 +226,30 @@ namespace TRIMRevisionExtract
                     };
 
                     var reader = new StreamReader(strContainerFile);
-                    var csv = new CsvReader(reader, config);
-
-                    Console.WriteLine($"Loading Containers ... ");
-                    var records = csv.GetRecords<ContainerRec>();
-
-                    foreach (var rec in records)
+                    using (var csv = new CsvReader(reader, config))
                     {
-                        lContainerCount++;
-                        Console.WriteLine($"Uri: {rec.Uri}, Number: {rec.Number}");
 
-                        DateTime dt = DateTime.Parse(rec.DateCreated);
-                        if (!ContainerBuckets.ContainsKey(dt.Year.ToString()))
+                        Console.WriteLine($"Loading Containers ... ");
+                        var records = csv.GetRecords<ContainerRec>();
+
+                        foreach (var rec in records)
                         {
-                            ContainerBuckets.Add(dt.Year.ToString(), new StreamWriter($"{basePath}\\{dt.Year}-Containers.csv"));
-                            ContainerBuckets[dt.Year.ToString()].WriteLine(strRPFileHeaders);
-                            ContainerBuckets[dt.Year.ToString()].AutoFlush = true;
+                            lContainerCount++;
+                            Console.WriteLine($"Uri: {rec.Uri}, Number: {rec.Number}");
+
+                            DateTime dt = DateTime.Parse(rec.DateCreated);
+                            if (!ContainerBuckets.ContainsKey(dt.Year.ToString()))
+                            {
+                                ContainerBuckets.Add(dt.Year.ToString(), new StreamWriter($"{basePath}\\{dt.Year}-Containers.csv"));
+                                ContainerBuckets[dt.Year.ToString()].WriteLine(strRPFileHeaders);
+                                ContainerBuckets[dt.Year.ToString()].AutoFlush = true;
+                            }
+
+                            ContainersDict.Add(rec.Uri, PrefixQuarter(rec));
                         }
-
-                        ContainersDict.Add(rec.Uri, PrefixQuarter(rec));
-                    }
-
+                    } // using
                     reader.Close();
+                    //csv.
                 }
                 catch (Exception ex)
                 {
@@ -362,27 +368,28 @@ namespace TRIMRevisionExtract
                     };
 
                     var reader = new StreamReader(strLocalRecordsFile);
-                    var csv = new CsvReader(reader, config);
-
-                    Console.WriteLine($"Loading Records ... ");
-                    var records = csv.GetRecords<RecordRec>();
- 
-                    foreach (var rec in records)
+                    using (var csv = new CsvReader(reader, config))
                     {
-                        lRecordCount++;
-                        Console.WriteLine($"Uri: {rec.Uri}, Number: {rec.Number}");
 
-                        DateTime dt = DateTime.Parse(rec.DateCreated);
-                        if (!RecordBuckets.ContainsKey(dt.Year.ToString()))
+                        Console.WriteLine($"Loading Records ... ");
+                        var records = csv.GetRecords<RecordRec>();
+
+                        foreach (var rec in records)
                         {
-                            RecordBuckets.Add(dt.Year.ToString(), new StreamWriter($"{basePath}\\{dt.Year}-Records.csv"));
-                            RecordBuckets[dt.Year.ToString()].AutoFlush = true;
-                            RecordBuckets[dt.Year.ToString()].WriteLine(strRPRecordHeaders);
+                            lRecordCount++;
+                            Console.WriteLine($"Uri: {rec.Uri}, Number: {rec.Number}");
+
+                            DateTime dt = DateTime.Parse(rec.DateCreated);
+                            if (!RecordBuckets.ContainsKey(dt.Year.ToString()))
+                            {
+                                RecordBuckets.Add(dt.Year.ToString(), new StreamWriter($"{basePath}\\{dt.Year}-Records.csv"));
+                                RecordBuckets[dt.Year.ToString()].AutoFlush = true;
+                                RecordBuckets[dt.Year.ToString()].WriteLine(strRPRecordHeaders);
+                            }
+
+                            RecordsDict.Add(rec.Uri, PrefixQuarter(rec));
                         }
-
-                        RecordsDict.Add(rec.Uri, PrefixQuarter(rec));
-                    }
-
+                    } // using
                     reader.Close();
                 }
                 catch (Exception ex)

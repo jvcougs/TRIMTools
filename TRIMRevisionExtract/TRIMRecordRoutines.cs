@@ -36,34 +36,47 @@ namespace TRIMRevisionExtract
             Console.WriteLine("DoTrimStuff: retrieving [{0}]", objSearch.SearchString);
             swPerfAndLogOutfile.WriteLine("DoTrimStuff: retrieving [{0}]", objSearch.SearchString);
 
-            if (File.Exists(strCheckListFile))
+            if (File.Exists(strCheckListFile)) // and presumably, all the other files, also ...
             {
+                swCheckListFile = new StreamWriter(strCheckListFile, append: true);
+
                 Console.WriteLine("Appending to {0}", strRecordsOutfile);
                 swPerfAndLogOutfile.WriteLine("Appending to {0}", strRecordsOutfile);
- 
-                swCheckListFile = new StreamWriter(strCheckListFile, append: true);
+
+                //var streamR = new FileStream(strRecordsOutfile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                swRecordsOutfile = new StreamWriter(strRecordsOutfile, append: true);
+
+                Console.WriteLine("Appending to {0}", strContainerOutfile);
+                swPerfAndLogOutfile.WriteLine("Appending to {0}", strContainerOutfile);
+
+                //var streamC = new FileStream(strContainerOutfile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                swContainerOutfile = new StreamWriter(strContainerOutfile, append: true);
+
             }
             else
             {
                 Console.WriteLine("Writing to {0}", strRecordsOutfile);
                 swPerfAndLogOutfile.WriteLine("Writing to {0}", strRecordsOutfile);
 
-                swCheckListFile = new StreamWriter(strCheckListFile);
+                swCheckListFile = new StreamWriter(strCheckListFile, append: true);
+
+                var streamR = new FileStream(strRecordsOutfile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                swRecordsOutfile = new StreamWriter(streamR);
+                swRecordsOutfile.WriteLine(string.Join(",", recordHeaderTable.Values));
+
+                Console.WriteLine("Writing to {0}", strContainerOutfile);
+                swPerfAndLogOutfile.WriteLine("Writing to {0}", strContainerOutfile);
+
+                var streamC = new FileStream(strContainerOutfile, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                swContainerOutfile = new StreamWriter(streamC);
+                swContainerOutfile.WriteLine(string.Join(",", fileHeaderTable.Values));
+
             }
 
             swCheckListFile.AutoFlush = true;
-
-            swRecordsOutfile = new StreamWriter(strRecordsOutfile);
             swRecordsOutfile.AutoFlush = true;
-            swRecordsOutfile.WriteLine(string.Join(",", recordHeaderTable.Values));
-
-            Console.WriteLine("Writing to {0}", strContainerOutfile);
-            swPerfAndLogOutfile.WriteLine("Writing to {0}", strContainerOutfile);
-
-            swContainerOutfile = new StreamWriter(strContainerOutfile);
             swContainerOutfile.AutoFlush = true;
-            swContainerOutfile.WriteLine(string.Join(",", fileHeaderTable.Values));
- 
+
             foreach (Record objRec in objSearch)
             {
                 GetRecordsAndPayloadRecursive(objRec);

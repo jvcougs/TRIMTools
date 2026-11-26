@@ -181,6 +181,12 @@ namespace TRIMRevisionExtract
             {
                 Console.WriteLine(ex.ToString());
                 swPerfAndLogOutfile.WriteLine(ex.ToString() );
+                
+                swCheckListFile?.Close();
+                swRecordsOutfile?.Close();
+                swContainerOutfile?.Close();
+                swAuditOutfile?.Close();
+
             }
 
             sw.Stop();
@@ -191,6 +197,8 @@ namespace TRIMRevisionExtract
 
             Console.Write("Press a key to exit: ");
             Console.ReadKey();
+
+            Environment.Exit(0);
         }
 
         //static Dictionary<int, BaseObjectTypes.RecordType> recTypes = new Dictionary<int, BaseObjectTypes.RecordType>();
@@ -315,10 +323,12 @@ namespace TRIMRevisionExtract
 
             LoadEStoreMap();
 
-            if (TrimExtractMetadata == "true" && File.Exists(strRecordsOutfile) && File.Exists(strContainerOutfile))
+            //if (TrimExtractMetadata == "true" && File.Exists(strCheckListFile) && File.Exists(strContainerOutfile))
+            if (TrimExtractMetadata == "true" && File.Exists(strCheckListFile))
             {
-                //checkList = new CheckList(strContainerOutfile, strRecordsOutfile, TRIMFolderFields, TRIMRecordFields);
-                checkList = new CheckList(strContainerOutfile, strRecordsOutfile, strCheckListFile, strRPFileHeaders, strRPRecordHeaders);
+                    //checkList = new CheckList(strContainerOutfile, strRecordsOutfile, TRIMFolderFields, TRIMRecordFields);
+                    //checkList = new CheckList(strContainerOutfile, strRecordsOutfile, strCheckListFile, strRPFileHeaders, strRPRecordHeaders);
+                    checkList = new CheckList(strCheckListFile);
             }
 
             doIA = IA_Options_DoTrimWalk == "true" ||

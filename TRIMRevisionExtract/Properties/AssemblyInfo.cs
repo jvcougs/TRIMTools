@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TRIMRevisionExtract")]
-[assembly: AssemblyDescription("eStoreMap enhancements")]
+[assembly: AssemblyDescription("checkList sheninghans")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Fierce Kitty Engineering")]
 [assembly: AssemblyProduct("TRIMRevisionExtract")]
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("1.0.2.21")]
-[assembly: AssemblyFileVersion("1.0.2.21")]
+[assembly: AssemblyVersion("1.0.2.22")]
+[assembly: AssemblyFileVersion("1.0.2.22")]
