@@ -150,6 +150,12 @@ namespace TRIMRevisionExtract
 
                 if (TrimExtractUseDocStoreMap == "true")
                 {
+                    if (!eStoreMap.ContainsKey(objRec.EStore.Path))
+                    {
+                        Console.WriteLine("GetDocumentStack: check your docStore mapping! Src needs to match that which appears in the TRIM Config on the client. objRec.EStore.Path not found: [{0}], e.g. key[0] -> expecting [{1}]", objRec.EStore.Path, eStoreMap.Keys.ElementAt(0));
+                        swPerfAndLogOutfile.WriteLine("GetDocumentStack: check your docStore mapping! Src needs to match that which appears in the TRIM Config on the client. objRec.EStore.Path not found: [{0}], e.g. key[0] -> expecting [{1}]", objRec.EStore.Path, eStoreMap.Keys.ElementAt(0));
+                    }
+
                     eStorePath = eStoreMap[objRec.EStore.Path] + objRec.EStoreId.Replace('+', '\\');
                 } 
                 else
